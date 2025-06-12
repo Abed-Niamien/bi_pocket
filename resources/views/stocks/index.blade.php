@@ -4,14 +4,14 @@
 
 <x-slot name="header">
     <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-        {{ __('Liste des Stocks') }}
+        {{ __('Liste des Stocks disponibles') }}
     </h2>
 </x-slot>
 
 <div class="py-6">
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <div class="bg-white shadow rounded-lg p-6">
-            <h3 class="text-lg font-bold text-indigo-700 mb-4">Stocks enregistrés</h3>
+            <h3 class="text-lg font-bold text-indigo-700 mb-4">Stocks disponibles</h3>
 
             @if($stocks->isEmpty())
                 <p class="text-gray-500 italic">Aucun stock enregistré.</p>

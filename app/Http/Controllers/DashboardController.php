@@ -88,6 +88,7 @@ if ($user->id_role_user == 1) {
 }
 
 
+
  elseif ($user->id_role_user == 2) {
     // Employé : une seule entreprise
     $entreprise = $user->entreprises()->first();

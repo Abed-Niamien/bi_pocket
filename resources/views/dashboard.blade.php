@@ -5,6 +5,7 @@
         </h2>
     </x-slot>
 
+
 @section('content')
 
 @php
@@ -112,9 +113,59 @@
             @if($entreprises->isEmpty())
                 <p class="text-center text-gray-600 italic mt-12">Vous n'avez pas encore créé d'entreprise.</p>
             @endif
-        
+      
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        @foreach($entreprises as $entreprise)
+            new Chart(document.getElementById('chart-periode-{{ $entreprise->id }}'), {
+                type: 'line',
+                data: {
+                    labels: {!! json_encode($statistiquesParEntreprise[$entreprise->id]['ventesParPeriode']->pluck('periode')) !!},
+                    datasets: [{
+                        label: 'Montant total',
+                        data: {!! json_encode($statistiquesParEntreprise[$entreprise->id]['ventesParPeriode']->pluck('total')) !!},
+                        borderColor: '#4f46e5',
+                        fill: false,
+                        tension: 0.3
+                    }]
+                },
+                options: { responsive: true }
+            });
+
+            new Chart(document.getElementById('chart-categorie-{{ $entreprise->id }}'), {
+                type: 'bar',
+                data: {
+                    labels: {!! json_encode($statistiquesParEntreprise[$entreprise->id]['ventesParCategorie']->pluck('categorie')) !!},
+                    datasets: [{
+                        label: 'Total des ventes',
+                        data: {!! json_encode($statistiquesParEntreprise[$entreprise->id]['ventesParCategorie']->pluck('total')) !!},
+                        backgroundColor: '#6366f1'
+                    }]
+                },
+                options: { responsive: true }
+            });
+
+            new Chart(document.getElementById('chart-produits-{{ $entreprise->id }}'), {
+                type: 'pie',
+                data: {
+                    labels: {!! json_encode($statistiquesParEntreprise[$entreprise->id]['produitsPlusVendus']->pluck('produit')) !!},
+                    datasets: [{
+                        data: {!! json_encode($statistiquesParEntreprise[$entreprise->id]['produitsPlusVendus']->pluck('quantite_totale')) !!},
+                        backgroundColor: ['#f97316', '#10b981', '#6366f1', '#ec4899', '#facc15']
+                    }]
+                },
+                options: { responsive: true }
+            });
+        @endforeach
+    });
+</script>
+
     </main>
 </div>
+
+
+
 
 
             {{-- Partie EMPLOYÉ --}}
@@ -185,52 +236,6 @@
 
 @endsection
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        @foreach($entreprises as $entreprise)
-            new Chart(document.getElementById('chart-periode-{{ $entreprise->id }}'), {
-                type: 'line',
-                data: {
-                    labels: {!! json_encode($statistiquesParEntreprise[$entreprise->id]['ventesParPeriode']->pluck('periode')) !!},
-                    datasets: [{
-                        label: 'Montant total',
-                        data: {!! json_encode($statistiquesParEntreprise[$entreprise->id]['ventesParPeriode']->pluck('total')) !!},
-                        borderColor: '#4f46e5',
-                        fill: false,
-                        tension: 0.3
-                    }]
-                },
-                options: { responsive: true }
-            });
-
-            new Chart(document.getElementById('chart-categorie-{{ $entreprise->id }}'), {
-                type: 'bar',
-                data: {
-                    labels: {!! json_encode($statistiquesParEntreprise[$entreprise->id]['ventesParCategorie']->pluck('categorie')) !!},
-                    datasets: [{
-                        label: 'Total des ventes',
-                        data: {!! json_encode($statistiquesParEntreprise[$entreprise->id]['ventesParCategorie']->pluck('total')) !!},
-                        backgroundColor: '#6366f1'
-                    }]
-                },
-                options: { responsive: true }
-            });
-
-            new Chart(document.getElementById('chart-produits-{{ $entreprise->id }}'), {
-                type: 'pie',
-                data: {
-                    labels: {!! json_encode($statistiquesParEntreprise[$entreprise->id]['produitsPlusVendus']->pluck('produit')) !!},
-                    datasets: [{
-                        data: {!! json_encode($statistiquesParEntreprise[$entreprise->id]['produitsPlusVendus']->pluck('quantite_totale')) !!},
-                        backgroundColor: ['#f97316', '#10b981', '#6366f1', '#ec4899', '#facc15']
-                    }]
-                },
-                options: { responsive: true }
-            });
-        @endforeach
-    });
-</script>
 
 
 
