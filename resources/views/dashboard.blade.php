@@ -60,7 +60,11 @@
             @foreach($entreprises as $entreprise)
                 <div class="bg-white shadow rounded-lg mb-8 p-6">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
-                        <h2 class="text-2xl font-semibold text-indigo-700">{{ $entreprise->nom_entreprise }}</h2>
+                        <h2 class="text-2xl font-semibold text-indigo-700">
+                            <a href="{{ route('entreprises.show', $entreprise->id) }}" class="hover:underline">
+                                {{ $entreprise->nom_entreprise }}
+                            </a>
+                        </h2>
                         <a href="{{ route('employes.create', $entreprise) }}"
                            class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition">
                             + Ajouter un employé

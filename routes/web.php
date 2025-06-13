@@ -22,6 +22,7 @@ Route::middleware(['auth'])->group(function () {
     // Entreprises
     Route::get('/entreprises/create', [EntrepriseController::class, 'create'])->name('entreprises.create');
     Route::post('/entreprises', [EntrepriseController::class, 'store'])->name('entreprises.store');
+    Route::get('/entreprises/{id}', [EntrepriseController::class, 'show'])->name('entreprises.show');
 
     // Employés liés à une entreprise
     Route::get('/entreprises/{entreprise}/employes/create', [EmployeController::class, 'create'])->name('employes.create');

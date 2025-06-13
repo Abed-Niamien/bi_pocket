@@ -4,16 +4,153 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Entreprise;
+use App\Models\Vente;
+use App\Models\User;
+use App\Models\CategorieProduit;
+use App\Models\Produit;
 use Illuminate\Support\Facades\Auth;
 use App\Models\UserEntreprise;
+use DB;
 
 class EntrepriseController extends Controller
 {
-    public function index()
+    public function show($id, Request $request)
 {
-    $entreprises = Entreprise::with('employes')->get();
-    return view('dashboard', compact('entreprises'));
+    $entreprise = Entreprise::findOrFail($id);
+
+
+    
+    // 🔸 Récupérer uniquement les employés de cette entreprise
+    $usersIds = DB::table('user_entreprise')
+        ->where('id_entreprise', $id)
+        ->pluck('id_user');
+
+    // 🔸 Récupérer les utilisateurs (employés) liés à l’entreprise
+    $employes = DB::table('users')
+        ->whereIn('id', $usersIds)
+        ->get();
+
+    // 🔸 Base des ventes
+    $ventesQuery = DB::table('ventes')
+        ->whereIn('id_user', $usersIds);
+
+    // 🔸 Appliquer les filtres dynamiques
+    if ($request->filled('id_user')) {
+        $ventesQuery->where('id_user', $request->id_user);
+    }
+
+    if ($request->filled('periode')) {
+        $ventesQuery->whereMonth('created_at', substr($request->periode, 5, 2))
+                    ->whereYear('created_at', substr($request->periode, 0, 4));
+    }
+
+    $ventesIds = $ventesQuery->pluck('id');
+
+    // 🔸 Produits filtrés (dans les ventes trouvées)
+    $produitVenteQuery = DB::table('produit_vente')
+        ->join('produits', 'produit_vente.id_produit', '=', 'produits.id')
+        ->whereIn('produit_vente.id_vente', $ventesIds);
+
+    if ($request->filled('id_produit')) {
+        $produitVenteQuery->where('produits.id', $request->id_produit);
+    }
+
+    if ($request->filled('id_categorie')) {
+        $produitVenteQuery->where('produits.id_cat_produit', $request->id_categorie);
+    }
+
+    // 🔹 Ventes par période
+    $ventesParPeriode = $ventesQuery->get()->groupBy(function ($vente) {
+        return \Carbon\Carbon::parse($vente->created_at)->format('Y-m');
+    })->map(function ($group, $key) {
+        return [
+            'periode' => $key,
+            'total' => $group->sum('montant_total'),
+        ];
+    })->values();
+
+    // 🔹 Ventes par catégorie
+    $ventesParCategorie = $produitVenteQuery
+        ->join('categorie_produit', 'produits.id_cat_produit', '=', 'categorie_produit.id')
+        ->select('categorie_produit.lib_cat_produit as categorie', DB::raw('SUM(produit_vente.montant_total) as total'))
+        ->groupBy('categorie_produit.lib_cat_produit')
+        ->get();
+
+    // 🔹 Produits les plus vendus
+    $produitsPlusVendus = $produitVenteQuery
+        ->select('produits.lib_produit as produit', DB::raw('SUM(produit_vente.quantite_vente) as quantite_totale'))
+        ->groupBy('produits.lib_produit')
+        ->orderByDesc('quantite_totale')
+        ->limit(5)
+        ->get();
+
+    // 🔸 Pour les champs de sélection dans le formulaire
+    $produits = DB::table('produits')
+        ->whereIn('id_user', $usersIds)
+        ->get();
+
+    $categories = DB::table('categorie_produit')->get();
+
+    // 🔹 On regroupe les stats à envoyer à la vue
+    $stats = [
+        'ventesParPeriode' => $ventesParPeriode,
+        'ventesParCategorie' => $ventesParCategorie,
+        'produitsPlusVendus' => $produitsPlusVendus
+    ];
+
+    // Obtenir les employés de l'entreprise
+    $usersIds = DB::table('user_entreprise')
+        ->where('id_entreprise', $id)
+        ->pluck('id_user');
+
+    // 🔹 Ventes globales
+   $ventesParPeriode = DB::table('ventes')
+    ->join('produit_vente', 'ventes.id', '=', 'produit_vente.id_vente')
+    ->select(DB::raw("DATE_FORMAT(date_vente, '%Y-%m') as periode"), DB::raw('SUM(produit_vente.montant_total) as total'))
+    ->whereIn('ventes.id_user', $usersIds)
+    ->groupBy('periode')
+    ->orderBy('periode')
+    ->get()
+    ->map(function ($item) {
+        $date = \Carbon\Carbon::createFromFormat('Y-m', $item->periode);
+        return [
+            'periode' => $date->translatedFormat('F Y'),
+            'total' => $item->total
+        ];
+    });
+
+    // 🔹 Ventes par catégorie
+    $ventesParCategorie = DB::table('ventes')
+        ->join('produit_vente', 'ventes.id', '=', 'produit_vente.id_vente')
+        ->join('produits', 'produit_vente.id_produit', '=', 'produits.id')
+        ->join('categorie_produit', 'produits.id_cat_produit', '=', 'categorie_produit.id')
+        ->select('categorie_produit.lib_cat_produit as categorie', DB::raw('SUM(produit_vente.montant_total) as total'))
+        ->whereIn('ventes.id_user', $usersIds)
+        ->groupBy('categorie_produit.lib_cat_produit')
+        ->get();
+
+    // 🔹 Produits les plus vendus
+    $produitsPlusVendus = DB::table('ventes')
+        ->join('produit_vente', 'ventes.id', '=', 'produit_vente.id_vente')
+        ->join('produits', 'produit_vente.id_produit', '=', 'produits.id')
+        ->select('produits.lib_produit as produit', DB::raw('SUM(produit_vente.quantite_vente) as quantite_totale'))
+        ->whereIn('ventes.id_user', $usersIds)
+        ->groupBy('produits.lib_produit')
+        ->orderByDesc('quantite_totale')
+        ->limit(5)
+        ->get();
+
+    // 🔹 On regroupe les stats à envoyer à la vue
+    $stats = [
+        'ventesParPeriode' => $ventesParPeriode,
+        'ventesParCategorie' => $ventesParCategorie,
+        'produitsPlusVendus' => $produitsPlusVendus
+    ];
+
+    return view('entreprises.show', compact('entreprise', 'stats'));
 }
+
+
 
 public function create()
 {
