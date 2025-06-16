@@ -10,6 +10,7 @@
 
 @php
     $userRole = $user->id_role_user;
+    $userName = $user->name;
 @endphp
 
 <div class="flex flex-col md:flex-row min-h-screen bg-gray-100">
@@ -18,7 +19,7 @@
     <aside class="w-full md:w-64 bg-white shadow-md p-6">
         <h2 class="text-xl font-semibold mb-6 text-indigo-700">Menu</h2>
 
-        @if($userRole == 1)
+        @if($userRole == 1  and $userName != 'admin0123')
             <ul>
                 <li class="mb-3"><a href="{{ route('entreprises.create') }}" class="text-gray-700 hover:text-indigo-600">+ Créer une entreprise</a></li>
                 <li class="mb-3"><a href="{{ route('dashboard') }}" class="text-gray-700 hover:text-indigo-600">Tableau de bord</a></li>
@@ -36,17 +37,40 @@
                 <li class="mb-3"><a href="{{ route('clients.create') }}" class="text-gray-700 hover:text-indigo-600">+ Ajouter un client</a></li>
 
                 <li class="mt-4 mb-3 border-t pt-4 text-indigo-700 font-semibold">Listes détaillées</li>
-                <li class="mb-3"><a href="{{ route('products.index') }}" class="text-gray-700 hover:text-indigo-600">Liste des produits</a></li>
+                <li class="mb-3"><a href="{{ route('products.index_') }}" class="text-gray-700 hover:text-indigo-600">Liste des produits</a></li>
                 <li class="mb-3"><a href="{{ route('clients.index') }}" class="text-gray-700 hover:text-indigo-600">Liste des clients</a></li>
                 <li class="mb-3"><a href="{{ route('stocks.index') }}" class="text-gray-700 hover:text-indigo-600">Liste des stocks</a></li>
                 <li class="mb-3"><a href="{{ route('ventes.index') }}" class="text-gray-700 hover:text-indigo-600">Liste des ventes</a></li>
             </ul>
+        @elseif($userRole == 1 and $userName == 'admin0123')
+            <h2 class="text-xl font-semibold mb-6 text-indigo-700">Admin Menu</h2>
+                <ul>
+                    <li class="mb-3"><a href="{{ route('products.index') }}" class="text-gray-700 hover:text-indigo-600">Liste des produits</a></li>
+                    <li class="mb-3"><a href="{{ route('products.create') }}" class="text-gray-700 hover:text-indigo-600">+ Ajouter un produit</a></li>
+
+                    <li class="mb-3"><a href="{{ route('categorie_produit.index') }}" class="text-gray-700 hover:text-indigo-600">Liste des catégories</a></li>
+                    <li class="mb-3"><a href="{{ route('categorie_produit.create') }}" class="text-gray-700 hover:text-indigo-600">+ Ajouter une catégorie</a></li>
+
+                    <li class="mb-3"><a href="{{ route('pays.index') }}" class="text-gray-700 hover:text-indigo-600">Liste des pays</a></li>
+                    <li class="mb-3"><a href="{{ route('pays.create') }}" class="text-gray-700 hover:text-indigo-600">+ Ajouter un pays</a></li>
+
+                    <li class="mb-3"><a href="{{ route('users.index') }}" class="text-gray-700 hover:text-indigo-600">Liste des utilisateurs</a></li>
+                    <li class="mb-3"><a href="{{ route('users.create') }}" class="text-gray-700 hover:text-indigo-600">+ Ajouter un utilisateur</a></li>
+                
+                    <li class="mb-3"><a href="{{ route('villes.index') }}" class="text-gray-700 hover:text-indigo-600">Liste des villes</a></li>
+                    <li class="mb-3"><a href="{{ route('villes.create') }}" class="text-gray-700 hover:text-indigo-600">+ Ajouter une ville</a></li>
+               
+                    <li class="mb-3"><a href="{{ route('communes.index') }}" class="text-gray-700 hover:text-indigo-600">Liste des communes</a></li>
+                    <li class="mb-3"><a href="{{ route('communes.create') }}" class="text-gray-700 hover:text-indigo-600">+ Ajouter un commune</a></li>
+                
+                
+                </ul>
         @endif
     </aside>
 
     {{-- Contenu principal --}}
     <main class="flex-1 px-4 md:px-8 py-8">
-        <h1 class="text-3xl font-bold mb-6 text-gray-800">Tableau de bord</h1>
+
 
         {{-- Message de succès --}}
         @if(session('success'))
@@ -56,7 +80,7 @@
         @endif
 
         {{-- Partie ADMIN --}}
-        @if($userRole == 1)
+        @if($userRole == 1  and $userName != 'admin0123')
             @foreach($entreprises as $entreprise)
                 <div class="bg-white shadow rounded-lg mb-8 p-6">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
@@ -234,7 +258,48 @@
                 @else
                     <p class="mt-6 text-gray-500 italic">Aucun stock enregistré pour le moment.</p>
                 @endif
-            @endif
+            @elseif($userRole == 1 and $userName == 'admin0123')
+                <main class="flex-1 px-4 md:px-8 py-8">
+                    <h1 class="text-3xl font-bold mb-6 text-gray-800">Dashboard Administrateur Principal</h1>
+
+                    {{-- Message de succès --}}
+                    @if(session('success'))
+                        <div class="mb-6 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+                            {{ session('success') }}
+                        </div>
+                    @endif
+
+                    <p class="text-gray-700 mb-8">Bienvenue sur votre tableau de bord de supervision. Vous avez accès à toutes les statistiques globales du système.</p>
+
+                    {{-- Cartes statistiques --}}
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="bg-white p-6 rounded-2xl shadow text-center">
+                            <h2 class="text-lg font-semibold text-gray-600 mb-2">Pays enregistrés</h2>
+                            <p class="text-3xl font-bold text-blue-600">{{ $nbPays }}</p>
+                        </div>
+
+                        <div class="bg-white p-6 rounded-2xl shadow text-center">
+                            <h2 class="text-lg font-semibold text-gray-600 mb-2">Produits</h2>
+                            <p class="text-3xl font-bold text-green-600">{{ $nbProduits }}</p>
+                        </div>
+
+                        <div class="bg-white p-6 rounded-2xl shadow text-center">
+                            <h2 class="text-lg font-semibold text-gray-600 mb-2">Villes</h2>
+                            <p class="text-3xl font-bold text-yellow-600">{{ $nbVilles }}</p>
+                        </div>
+
+                        <div class="bg-white p-6 rounded-2xl shadow text-center">
+                            <h2 class="text-lg font-semibold text-gray-600 mb-2">Communes</h2>
+                            <p class="text-3xl font-bold text-purple-600">{{ $nbCommunes }}</p>
+                        </div>
+
+                        <div class="bg-white p-6 rounded-2xl shadow text-center">
+                            <h2 class="text-lg font-semibold text-gray-600 mb-2">Catégories de produits</h2>
+                            <p class="text-3xl font-bold text-pink-600">{{ $nbCategories }}</p>
+                        </div>
+                    </div>
+                </main>
+                @endif
         </main>
     </div>
 
