@@ -19,6 +19,7 @@
                 <tr>
                     <th class="px-4 py-2 border">Nom du pays</th>
                     <th class="px-4 py-2 border">Date de création</th>
+                    <th class="px-4 py-2 border text-sm font-semibold text-gray-700">Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -26,6 +27,15 @@
                 <tr>
                     <td class="px-4 py-2 border">{{ $p->nom_pays }}</td>
                     <td class="px-4 py-2 border">{{ $p->created_at }}</td>
+                    <td class="px-4 py-2 border">
+                        <form action="{{ route('pays.destroy', $p->id) }}" method="POST" onsubmit="return confirm('Supprimer ce pays ?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700">
+                                Supprimer
+                            </button>
+                        </form>
+                    </td>
                 </tr>
                 @endforeach
             </tbody>

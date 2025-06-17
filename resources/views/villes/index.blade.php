@@ -19,6 +19,7 @@
                 <tr>
                     <th class="px-4 py-2 border">Nom de la ville</th>
                     <th class="px-4 py-2 border">Pays</th>
+                    <th class="px-4 py-2 border text-sm font-semibold text-gray-700">Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -26,6 +27,15 @@
                 <tr>
                     <td class="px-4 py-2 border">{{ $ville->lib_ville }}</td>
                     <td class="px-4 py-2 border">{{ $ville->pays->nom_pays ?? 'Sans pays' }}</td>
+                    <td class="px-4 py-2 border">
+                        <form action="{{ route('villes.destroy', $ville->id) }}" method="POST" onsubmit="return confirm('Supprimer cette ville ?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700">
+                                Supprimer
+                            </button>
+                        </form>
+                    </td>
                 </tr>
                 @endforeach
             </tbody>

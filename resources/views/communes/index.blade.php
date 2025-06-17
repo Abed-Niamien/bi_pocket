@@ -19,6 +19,7 @@
                 <tr>
                     <th class="px-4 py-2 border">Nom de la commune</th>
                     <th class="px-4 py-2 border">Ville</th>
+                    <th class="px-4 py-2 text-sm font-semibold text-gray-700">Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -26,6 +27,15 @@
                 <tr>
                     <td class="px-4 py-2 border">{{ $commune->lib_commune }}</td>
                     <td class="px-4 py-2 border">{{ $commune->ville->lib_ville ?? 'Sans ville' }}</td>
+                    <td class="px-4 py-2 border">
+                        <form action="{{ route('communes.destroy', $commune->id) }}" method="POST" onsubmit="return confirm('Supprimer cette commune ?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700">
+                                Supprimer
+                            </button>
+                        </form>
+                    </td>
                 </tr>
                 @endforeach
             </tbody>

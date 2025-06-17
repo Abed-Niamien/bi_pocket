@@ -8,8 +8,8 @@
     </h2>
 </x-slot>
 
-<div class="py-6">
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+
+    <div class="mb-8 bg-white p-6 rounded shadow">
         <div class="bg-white shadow rounded-lg p-6">
             <h3 class="text-lg font-bold text-indigo-700 mb-4">Produits enregistrés</h3>
 
@@ -17,7 +17,7 @@
                 <p class="text-gray-500 italic">Aucun produit enregistré.</p>
             @else
                 <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
+                    <table class="w-full table-auto border">
                         <thead class="bg-gray-50">
                             <tr>
                                 <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700 whitespace-nowrap">ID</th>
@@ -27,6 +27,7 @@
                                 <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700 whitespace-nowrap">Photo</th>
                                 <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700 whitespace-nowrap">Catégorie</th>
                                 <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700 whitespace-nowrap">Créé le</th>
+                                <th class="px-4 py-2 text-sm font-semibold text-gray-700">Actions</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
@@ -45,11 +46,20 @@
                                     </td>
                                     <td class="px-4 py-2 whitespace-nowrap">{{ $produit->categorie->lib_cat_produit ?? 'Inconnu' }}</td>
                                     <td class="px-4 py-2 whitespace-nowrap">{{ $produit->created_at->format('d/m/Y') }}</td>
+                                    <td class="px-4 py-4 whitespace-nowrap">
+                                        <form action="{{ route('products.destroy', $produit->id) }}" method="POST" onsubmit="return confirm('Voulez-vous vraiment supprimer ce produit ?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-semibold px-3 py-1 rounded text-sm">
+                                                Supprimer
+                                            </button>
+                                        </form>
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>
                     </table>
-                </div>
+                
             @endif
         </div>
     </div>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pays;
+use App\Http\Controllers\PaysController;
 use Illuminate\Http\Request;
 
 class PaysController extends Controller
@@ -46,9 +47,10 @@ class PaysController extends Controller
         return redirect()->route('pays.index')->with('success', 'Pays mis à jour avec succès.');
     }
 
-    public function destroy(Pays $pay)
+    public function destroy($id)
     {
-        $pay->delete();
-        return redirect()->route('pays.index')->with('success', 'Pays supprimé avec succès.');
+        $p = Pays::findOrFail($id);
+        $p->delete();
+        return redirect()->route('dashboard')->with('success', 'Pays supprimé avec succès.');
     }
 }

@@ -56,9 +56,10 @@ class CommuneController extends Controller
         return redirect()->route('communes.index')->with('success', 'Commune mise à jour avec succès.');
     }
 
-    public function destroy(Commune $commune)
+    public function destroy($id)
     {
+        $commune = Commune::findOrFail($id);
         $commune->delete();
-        return redirect()->route('communes.index')->with('success', 'Commune supprimée avec succès.');
+        return redirect()->route('dashboard')->with('success', 'Commune supprimée avec succès.');
     }
 }

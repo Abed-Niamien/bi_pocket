@@ -50,9 +50,10 @@ class CategorieProduitController extends Controller
         return redirect()->route('categories.index')->with('success', 'Catégorie mise à jour avec succès.');
     }
 
-    public function destroy(CategorieProduit $category)
+    public function destroy($id)
     {
-        $category->delete();
-        return redirect()->route('categories.index')->with('success', 'Catégorie supprimée avec succès.');
+        $cat = CategorieProduit::findOrFail($id);
+        $cat->delete();
+        return redirect()->route('dashboard')->with('success', 'Catégorie supprimée avec succès.');
     }
 }

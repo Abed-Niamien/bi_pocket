@@ -64,12 +64,14 @@ if ($request->hasFile('photo_produit')) {
     return redirect()->route('dashboard')->with('success', 'Produit ajouté avec succès.');
 }
 
-public function edit(Produit $produit)
+ // Méthode d'édition (affiche le formulaire)
+    public function edit(Produit $produit)
     {
         $categories = CategorieProduit::all();
-        return view('produits.edit', compact('produit', 'categories'));
+        return view('products.edit', compact('produit', 'categories'));
     }
 
+    // Méthode de mise à jour (traitement du formulaire)
     public function update(Request $request, Produit $produit)
     {
         $request->validate([
@@ -83,8 +85,9 @@ public function edit(Produit $produit)
 
         $data = $request->all();
 
+        // Gérer l'upload d'image
         if ($request->hasFile('photo_produit')) {
-            // Supprimer l'ancienne photo si elle existe
+            // Supprimer l'ancienne photo s'il y en a une
             if ($produit->photo_produit) {
                 Storage::disk('public')->delete($produit->photo_produit);
             }
@@ -98,13 +101,13 @@ public function edit(Produit $produit)
         return redirect()->route('produits.index')->with('success', 'Produit mis à jour avec succès.');
     }
 
-    public function destroy(Produit $produit)
-    {
-        if ($produit->photo_produit) {
-            Storage::disk('public')->delete($produit->photo_produit);
-        }
+
+
+    public function destroy($id)
+{
+        $produit = Produit::findOrFail($id);
         $produit->delete();
-        return redirect()->route('produits.index')->with('success', 'Produit supprimé avec succès.');
+        return redirect()->route('dashboard')->with('success', 'Produit supprimé avec succès.');
     }
 
 }

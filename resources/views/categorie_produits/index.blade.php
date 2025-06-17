@@ -20,6 +20,7 @@
                 <tr>
                     <th class="px-4 py-2 border">Libellé</th>
                     <th class="px-4 py-2 border">Date de création</th>
+                    <th class="px-4 py-2 text-sm font-semibold text-gray-700">Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -27,6 +28,15 @@
                 <tr>
                     <td class="px-4 py-2 border">{{ $cat->lib_cat_produit }}</td>
                     <td class="px-4 py-2 border">{{ $cat->created_at }}</td>
+                    <td class="px-4 py-2 border">
+                        <form action="{{ route('categorie_produit.destroy', $cat->id) }}" method="POST" onsubmit="return confirm('Confirmer la suppression de cette catégorie ?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
+                                Supprimer
+                            </button>
+                        </form>
+                    </td>
                 </tr>
                 @endforeach
             </tbody>
