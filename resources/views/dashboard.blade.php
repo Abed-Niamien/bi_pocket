@@ -21,14 +21,38 @@
 
         @if($userRole == 1  and $userName != 'admin0123')
             <ul>
-                <li class="mb-3"><a href="{{ route('entreprises.create') }}" class="text-gray-700 hover:text-indigo-600">+ Créer une entreprise</a></li>
-                <li class="mb-3"><a href="{{ route('dashboard') }}" class="text-gray-700 hover:text-indigo-600">Tableau de bord</a></li>
                 <li class="mb-3">
-                    <a href="#" class="text-gray-700 hover:text-indigo-600 font-semibold">
-                        Voir les statistiques
+                    <a href="{{ route('entreprises.create') }}" class="text-gray-700 hover:text-indigo-600 font-semibold">
+                        + Créer une entreprise
+                    </a>
+                </li>
+                <li class="mb-3">
+                    <a href="{{ route('admin.ventes.index') }}" class="text-gray-700 hover:text-indigo-600 font-semibold">
+                        Section Ventes
+                    </a>
+                </li>
+                <li class="mb-3">
+                    <a href="{{ route('admin.clients.index') }}" class="text-gray-700 hover:text-indigo-600 font-semibold">
+                        Section Clients
+                    </a>
+                </li>
+                <li class="mb-3">
+                    <a href="{{ route('stocks.index') }}" class="text-gray-700 hover:text-indigo-600 font-semibold">
+                        Section Stock
+                    </a>
+                </li>
+                <li class="mb-3">
+                    <a href="{{ route('admin.entreprises.index') }}" class="text-gray-700 hover:text-indigo-600 font-semibold">
+                        Section Entreprises
+                    </a>
+                </li>
+                <li class="mb-3">
+                    <a href="{{ route('admin.employes.index') }}" class="text-gray-700 hover:text-indigo-600 font-semibold">
+                        Section Employes
                     </a>
                 </li>
             </ul>
+
         @elseif($userRole == 2)
             <ul>
                 <li class="mb-3"><a href="{{ route('products.create') }}" class="text-gray-700 hover:text-indigo-600">+ Ajouter un produit</a></li>

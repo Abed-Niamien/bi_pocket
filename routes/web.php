@@ -10,6 +10,8 @@ use App\Http\Controllers\VilleController;
 use App\Http\Controllers\CommuneController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\ExportController;
+use App\Http\Controllers\ClientSegmentationController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -26,11 +28,41 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/entreprises/create', [EntrepriseController::class, 'create'])->name('entreprises.create');
     Route::post('/entreprises', [EntrepriseController::class, 'store'])->name('entreprises.store');
     Route::get('/entreprises/{id}', [EntrepriseController::class, 'show'])->name('entreprises.show');
+    Route::get('admin/entreprises', [EntrepriseController::class, 'index'])->name('admin.entreprises.index');
+
+    // Export CSV pour les ventes par date
+    Route::get('/export-ventes/date/csv', [App\Http\Controllers\ExportController::class, 'exportVentesParDateCSV'])->name('exports.ventes.date.csv');
+
+    // Export CSV pour les ventes par produit
+    Route::get('/export-ventes/produit/csv', [App\Http\Controllers\ExportController::class, 'exportVentesParProduitCSV'])->name('exports.ventes.produit.csv');
+
+    // Export CSV pour les ventes par canal
+    Route::get('/export-ventes/canal/csv', [App\Http\Controllers\ExportController::class, 'exportVentesParCanalCSV'])->name('exports.ventes.canal.csv');
+
+    // Export CSV pour les ventes par ville
+    Route::get('/export-ventes/ville/csv', [App\Http\Controllers\ExportController::class, 'exportVentesParVilleCSV'])->name('exports.ventes.ville.csv');
+
+
+    // Export PDF pour les ventes par date
+    Route::get('/export-ventes/date/pdf', [App\Http\Controllers\ExportController::class, 'exportVentesParDatePDF'])->name('exports.ventes.date.pdf');
+
+    // Export PDF pour les ventes par produit
+    Route::get('/export-ventes/produit/pdf', [App\Http\Controllers\ExportController::class, 'exportVentesParProduitPDF'])->name('exports.ventes.produit.pdf');
+
+    // Export PDF pour les ventes par canal
+    Route::get('/export-ventes/canal/pdf', [App\Http\Controllers\ExportController::class, 'exportVentesParCanalPDF'])->name('exports.ventes.canal.pdf');
+
+    // Export PDF pour les ventes par ville
+    Route::get('/export-ventes/ville/pdf', [App\Http\Controllers\ExportController::class, 'exportVentesParVillePDF'])->name('exports.ventes.ville.pdf');
+
+    // Segmentation des clients
+    Route::get('admin/clients/index', [ClientSegmentationController::class, 'index'])
+    ->name('admin.clients.index');
 
     // Employés liés à une entreprise
     Route::get('/entreprises/{entreprise}/employes/create', [EmployeController::class, 'create'])->name('employes.create');
     Route::post('/entreprises/{entreprise}/employes', [EmployeController::class, 'store'])->name('employes.store');
-
+    Route::get('admin/entreprises/employes/', [EmployeController::class, 'index'])->name('admin.employes.index');
     //Produits 
     Route::get('/products/create', [ProductController::class, 'create'])->name('products.create');
     Route::post('/products', [ProductController::class, 'store'])->name('products.store');
@@ -39,7 +71,7 @@ Route::middleware(['auth'])->group(function () {
     //Ventes
     Route::get('ventes/create', [VenteController::class, 'create'])->name('ventes.create');
     Route::post('ventes', [VenteController::class, 'store'])->name('ventes.store');
-    Route::get('/ventes/index', [VenteController::class, 'index'])->name('ventes.index');
+    Route::get('admin/ventes/index', [VenteController::class, 'statistiques'])->name('admin.ventes.index');
 
     //Clients
     Route::get('clients/create', [ClientController::class, 'create'])->name('clients.create');
@@ -49,6 +81,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/stocks/create', [StockController::class, 'create'])->name('stocks.create');
     Route::post('/stocks', [StockController::class, 'store'])->name('stocks.store');
     Route::get('/stocks/index', [StockController::class, 'index'])->name('stocks.index');
+
+    //Exporter les donnees cients en csv et pdf
+    Route::get('/clients/segmentes/export/csv', [ClientSegmentationController::class, 'exportCSV'])->name('exports.clientscsv.csv');
+    Route::get('/clients/segmentes/export/pdf', [ClientSegmentationController::class, 'exportPDF'])->name('exports.clientspdf.pdf');
 
     });
 
