@@ -37,7 +37,7 @@
                     </a>
                 </li>
                 <li class="mb-3">
-                    <a href="{{ route('stocks.index') }}" class="text-gray-700 hover:text-indigo-600 font-semibold">
+                    <a href="{{ route('admin.stocks.index') }}" class="text-gray-700 hover:text-indigo-600 font-semibold">
                         Section Stock
                     </a>
                 </li>

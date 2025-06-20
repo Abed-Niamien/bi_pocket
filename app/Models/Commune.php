@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Commune extends Model
 {
-    protected $fillable = ['lib_commune', 'id_ville'];
+    protected $fillable = ['id_ville', 'lib_commune', 'longitude_commune', 'lattitude_commune'];
 
     public function ville()
     {

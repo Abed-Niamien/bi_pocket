@@ -4,6 +4,12 @@
 <div class="max-w-7xl mx-auto p-6">
     <h1 class="text-2xl font-bold mb-6">Segmentation des Clients</h1>
 
+
+    <a href="{{ route('admin.clients.liste') }}" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm mb-4 inline-block">
+         Voir la liste des clients
+    </a>
+
+
     {{-- Boutons d'export --}}
     <div class="flex flex-wrap justify-end mb-4 space-x-2">
         <a href="{{ route('exports.clientscsv.csv') }}" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-sm">

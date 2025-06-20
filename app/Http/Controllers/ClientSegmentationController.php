@@ -127,5 +127,66 @@ class ClientSegmentationController extends Controller
     return $pdf->download('clients_segmentes.pdf');
 }
 
+public function listeClients()
+{
+    $user = auth()->user();
+
+    // Récupérer toutes les entreprises liées à l'utilisateur
+    $idEntreprises = DB::table('user_entreprise')
+        ->where('id_user', $user->id)
+        ->pluck('id_entreprise');
+
+    // Récupérer tous les utilisateurs liés à ces entreprises
+    $idsUsers = DB::table('user_entreprise')
+        ->whereIn('id_entreprise', $idEntreprises)
+        ->pluck('id_user');
+
+    // Récupérer les clients associés à ces utilisateurs
+    $clients = DB::table('clients')
+        ->whereIn('id_user', $idsUsers)
+        ->select('id', 'nom_client', 'email_client', 'telephone_client', 'sexe_client', 'created_at')
+        ->orderBy('created_at', 'desc')
+        ->get();
+
+    return view('admin.clients.liste', compact('clients'));
+}
+
+public function show($id)
+{
+    $user = auth()->user();
+
+    // Vérifier que ce client appartient à une entreprise liée à l'utilisateur
+    $idEntreprises = DB::table('user_entreprise')->where('id_user', $user->id)->pluck('id_entreprise');
+    $idsUsers = DB::table('user_entreprise')->whereIn('id_entreprise', $idEntreprises)->pluck('id_user');
+
+    $client = DB::table('clients')
+        ->where('id', $id)
+        ->whereIn('id_user', $idsUsers)
+        ->first();
+
+    if (!$client) {
+        abort(403, "Accès refusé ou client inexistant");
+    }
+
+    // Détails des ventes
+    $ventes = DB::table('ventes as v')
+        ->join('produit_vente as pv', 'v.id', '=', 'pv.id_vente')
+        ->join('produits as p', 'pv.id_produit', '=', 'p.id')
+        ->select(
+            'v.id',
+            'v.date_vente',
+            'v.canal_vente',
+            DB::raw('SUM(pv.quantite_vente) as total_qte'),
+            DB::raw('SUM(pv.montant_total) as total_montant'),
+            DB::raw('GROUP_CONCAT(p.lib_produit) as produits')
+        )
+        ->where('v.id_client', $client->id)
+        ->groupBy('v.id', 'v.date_vente', 'v.canal_vente')
+        ->orderByDesc('v.date_vente')
+        ->get();
+
+    return view('admin.clients.show', compact('client', 'ventes'));
+}
+
     
 }

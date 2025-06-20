@@ -17,7 +17,50 @@ class StockController extends Controller
     return view('stocks.create', compact('produits'));
 }
 
-public function index() {
+public function index()
+    {
+        $user = auth()->user();
+
+        // 1. Récupérer les entreprises du user
+        $entreprises = DB::table('user_entreprise')
+            ->join('entreprises', 'user_entreprise.id_entreprise', '=', 'entreprises.id')
+            ->where('user_entreprise.id_user', $user->id)
+            ->select('entreprises.id', 'entreprises.nom_entreprise')
+            ->get();
+
+        $stocksParEntreprise = [];
+
+        foreach ($entreprises as $entreprise) {
+            // 2. Récupérer les utilisateurs de cette entreprise
+            $idsUsers = DB::table('user_entreprise')
+                ->where('id_entreprise', $entreprise->id)
+                ->pluck('id_user');
+
+            // 3. Récupérer les stocks faits par les utilisateurs de cette entreprise
+            $stocks = DB::table('stocks as s')
+                ->join('stock_produit as sp', 's.id', '=', 'sp.id_stock')
+                ->join('produits as p', 'sp.id_produit', '=', 'p.id')
+                ->whereIn('s.id_user', $idsUsers)
+                ->select(
+                    'p.lib_produit',
+                    'sp.quantite_stock',
+                    's.date_entree',
+                    's.id_user'
+                )
+                ->orderBy('s.date_entree', 'desc')
+                ->get();
+
+            $stocksParEntreprise[] = [
+                'id'         => $entreprise->id,
+                'entreprise' => $entreprise->nom_entreprise,
+                'stocks'     => $stocks
+            ];
+        }
+
+        return view('admin.stocks.index', compact('stocksParEntreprise'));
+    }
+
+public function index_() {
     $stocks = Stock::with('produits')
         ->where('id_user', Auth::id())
         ->get();

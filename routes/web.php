@@ -11,6 +11,7 @@ use App\Http\Controllers\CommuneController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ExportController;
+use App\Http\Controllers\StockMouvementController;
 use App\Http\Controllers\ClientSegmentationController;
 use Illuminate\Support\Facades\Route;
 
@@ -58,6 +59,9 @@ Route::middleware(['auth'])->group(function () {
     // Segmentation des clients
     Route::get('admin/clients/index', [ClientSegmentationController::class, 'index'])
     ->name('admin.clients.index');
+    Route::get('admin/clients/liste', [\App\Http\Controllers\ClientSegmentationController::class, 'listeClients'])->name('admin.clients.liste');
+    Route::get('admin/clients/{id}', [\App\Http\Controllers\ClientSegmentationController::class, 'show'])->name('admin.clients.show');
+
 
     // Employés liés à une entreprise
     Route::get('/entreprises/{entreprise}/employes/create', [EmployeController::class, 'create'])->name('employes.create');
@@ -80,7 +84,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/stocks/create', [StockController::class, 'create'])->name('stocks.create');
     Route::post('/stocks', [StockController::class, 'store'])->name('stocks.store');
-    Route::get('/stocks/index', [StockController::class, 'index'])->name('stocks.index');
+    Route::get('/stocks/index', [StockController::class, 'index_'])->name('stocks.index');
 
     //Exporter les donnees cients en csv et pdf
     Route::get('/clients/segmentes/export/csv', [ClientSegmentationController::class, 'exportCSV'])->name('exports.clientscsv.csv');
@@ -106,5 +110,12 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('communes', App\Http\Controllers\CommuneController::class);
 });
 
+Route::prefix('stocks')->name('admin.')->middleware(['auth'])->group(function () {
+    Route::get('/admin', [StockController::class, 'index'])->name('stocks.index');
+    Route::get('/edit/{id}', [StockController::class, 'edit'])->name('edit');
+    Route::post('/update/{id}', [StockController::class, 'update'])->name('update');
+});
+
+Route::get('stock/mouvements/{entreprise}', [StockMouvementController::class, 'index'])->name('admin.stocks.mouvements')->middleware(['auth']);
 
 require __DIR__.'/auth.php';
