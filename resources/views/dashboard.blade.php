@@ -61,7 +61,7 @@
                 <li class="mb-3"><a href="{{ route('clients.create') }}" class="text-gray-700 hover:text-indigo-600">+ Ajouter un client</a></li>
 
                 <li class="mt-4 mb-3 border-t pt-4 text-indigo-700 font-semibold">Listes détaillées</li>
-                <li class="mb-3"><a href="{{ route('products.index_') }}" class="text-gray-700 hover:text-indigo-600">Liste des produits</a></li>
+                <li class="mb-3"><a href="{{ route('products.index1') }}" class="text-gray-700 hover:text-indigo-600">Liste des produits</a></li>
                 <li class="mb-3"><a href="{{ route('clients.index') }}" class="text-gray-700 hover:text-indigo-600">Liste des clients</a></li>
                 <li class="mb-3"><a href="{{ route('stocks.index') }}" class="text-gray-700 hover:text-indigo-600">Liste des stocks</a></li>
                 <li class="mb-3"><a href="{{ route('ventes.index') }}" class="text-gray-700 hover:text-indigo-600">Liste des ventes</a></li>
@@ -171,19 +171,20 @@
     document.addEventListener('DOMContentLoaded', function () {
         @foreach($entreprises as $entreprise)
             new Chart(document.getElementById('chart-periode-{{ $entreprise->id }}'), {
-                type: 'line',
-                data: {
-                    labels: {!! json_encode($statistiquesParEntreprise[$entreprise->id]['ventesParPeriode']->pluck('periode')) !!},
-                    datasets: [{
-                        label: 'Montant total',
-                        data: {!! json_encode($statistiquesParEntreprise[$entreprise->id]['ventesParPeriode']->pluck('total')) !!},
-                        borderColor: '#4f46e5',
-                        fill: false,
-                        tension: 0.3
-                    }]
-                },
-                options: { responsive: true }
-            });
+    type: 'line',
+    data: {
+        labels: {!! json_encode($statistiquesParEntreprise[$entreprise->id]['ventesParPeriode']->pluck('periode')) !!},
+        datasets: [{
+            label: 'Montant total',
+            data: {!! json_encode($statistiquesParEntreprise[$entreprise->id]['ventesParPeriode']->pluck('total')) !!},
+            borderColor: '#4f46e5',
+            fill: false,
+            tension: 0.3
+        }]
+    },
+    options: { responsive: true }
+});
+
 
             new Chart(document.getElementById('chart-categorie-{{ $entreprise->id }}'), {
                 type: 'bar',

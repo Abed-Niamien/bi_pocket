@@ -56,7 +56,18 @@
             ],
         ];
     @endphp
-
+{{-- Formulaire de filtrage par entreprise --}}
+<form method="GET" class="mb-6 flex items-center gap-4">
+    <label for="entreprise" class="text-sm font-semibold">Filtrer par entreprise :</label>
+    <select name="entreprise" id="entreprise" onchange="this.form.submit()" class="border rounded px-3 py-2 text-sm">
+        <option value="">-- Toutes les entreprises --</option>
+        @foreach($entreprises as $e)
+            <option value="{{ $e->id }}" {{ request('entreprise') == $e->id ? 'selected' : '' }}>
+                {{ $e->nom_entreprise }}
+            </option>
+        @endforeach
+    </select>
+</form>
     @foreach ($sections as $section)
         <div class="bg-white shadow rounded-lg p-6 mb-10">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-5 space-y-3 sm:space-y-0">

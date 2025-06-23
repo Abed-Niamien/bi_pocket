@@ -15,7 +15,7 @@
     </div>
 
     <div class="bg-white rounded-lg shadow p-4">
-        <h2 class="text-lg font-semibold mb-4">Historique des Ventes</h2>
+        <h2 class="text-lg font-semibold mb-4">Historique des Achats</h2>
         @if($ventes->isEmpty())
             <p class="text-gray-500 text-sm">Aucune vente enregistrée pour ce client.</p>
         @else

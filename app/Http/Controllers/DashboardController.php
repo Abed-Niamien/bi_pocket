@@ -37,17 +37,20 @@ class DashboardController extends Controller
         $statistiquesParEntreprise = [];
 
         foreach ($entreprises as $entreprise) {
+            // 1. Récupération des IDs utilisateurs liés à l'entreprise
             $usersIds = $entreprise->users->pluck('id');
-            $ventesEntreprise = Vente::whereIn('id_user', $usersIds)->get();
 
-            $ventesParPeriode = $ventesEntreprise->groupBy(function ($vente) {
-                return \Carbon\Carbon::parse($vente->created_at)->format('Y-m');
-            })->map(function ($group, $key) {
-                return [
-                    'periode' => $key,
-                    'total' => $group->sum('montant_total'),
-                ];
-            })->values();
+            // 2. Jointure entre ventes et produit_vente pour récupérer les montants
+            $ventesParPeriode = DB::table('ventes as v')
+                ->join('produit_vente as pv', 'v.id', '=', 'pv.id_vente')
+                ->whereIn('v.id_user', $usersIds)
+                ->select(
+                    DB::raw('DATE(v.created_at) as periode'),
+                    DB::raw('SUM(pv.montant_total) as total')
+                )
+                ->groupBy('periode')
+                ->orderBy('periode')
+                ->get();
 
             $ventesParCategorie = DB::table('ventes')
                 ->join('produit_vente', 'ventes.id', '=', 'produit_vente.id_vente')

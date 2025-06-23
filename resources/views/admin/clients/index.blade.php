@@ -4,23 +4,35 @@
 <div class="max-w-7xl mx-auto p-6">
     <h1 class="text-2xl font-bold mb-6">Segmentation des Clients</h1>
 
+    {{-- Filtre entreprise --}}
+    <form method="GET" class="mb-6 flex items-center gap-3">
+        <label for="entreprise" class="text-sm font-medium">Filtrer par entreprise :</label>
+        <select name="entreprise" id="entreprise" onchange="this.form.submit()" class="border px-3 py-2 rounded text-sm">
+            <option value="">-- Toutes les entreprises --</option>
+            @foreach ($entreprises as $entreprise)
+                <option value="{{ $entreprise->id }}" {{ $entreprise->id == $selectedEntrepriseId ? 'selected' : '' }}>
+                    {{ $entreprise->nom_entreprise }}
+                </option>
+            @endforeach
+        </select>
+    </form>
 
+    {{-- Lien vers la liste --}}
     <a href="{{ route('admin.clients.liste') }}" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm mb-4 inline-block">
-         Voir la liste des clients
+        Voir la liste des clients
     </a>
-
 
     {{-- Boutons d'export --}}
     <div class="flex flex-wrap justify-end mb-4 space-x-2">
-        <a href="{{ route('exports.clientscsv.csv') }}" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-sm">
+        <a href="{{ route('exports.clientscsv.csv', ['entreprise' => $selectedEntrepriseId]) }}" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-sm">
             Exporter en CSV
         </a>
-        <a href="{{ route('exports.clientspdf.pdf') }}" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 text-sm">
+        <a href="{{ route('exports.clientspdf.pdf', ['entreprise' => $selectedEntrepriseId]) }}" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 text-sm">
             Exporter en PDF
         </a>
     </div>
 
-    {{-- Tableau des clients segmentés --}}
+    {{-- Tableau --}}
     <div class="overflow-x-auto bg-white shadow rounded-lg">
         <table class="min-w-full divide-y divide-gray-200 text-sm text-left">
             <thead class="bg-gray-50">

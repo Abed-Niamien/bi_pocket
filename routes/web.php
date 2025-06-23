@@ -75,6 +75,7 @@ Route::middleware(['auth'])->group(function () {
     //Ventes
     Route::get('ventes/create', [VenteController::class, 'create'])->name('ventes.create');
     Route::post('ventes', [VenteController::class, 'store'])->name('ventes.store');
+    Route::get('ventes/index', [VenteController::class, 'index'])->name('ventes.index');
     Route::get('admin/ventes/index', [VenteController::class, 'statistiques'])->name('admin.ventes.index');
 
     //Clients
