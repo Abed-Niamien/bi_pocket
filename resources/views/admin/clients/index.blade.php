@@ -1,21 +1,34 @@
 @extends('layouts.sidebar')
 
 @section('content')
-<div class="max-w-7xl mx-auto p-6">
-    <h1 class="text-2xl font-bold mb-6">Segmentation des Clients</h1>
 
-    {{-- Filtre entreprise --}}
-    <form method="GET" class="mb-6 flex items-center gap-3">
-        <label for="entreprise" class="text-sm font-medium">Filtrer par entreprise :</label>
-        <select name="entreprise" id="entreprise" onchange="this.form.submit()" class="border px-3 py-2 rounded text-sm">
-            <option value="">-- Toutes les entreprises --</option>
-            @foreach ($entreprises as $entreprise)
-                <option value="{{ $entreprise->id }}" {{ $entreprise->id == $selectedEntrepriseId ? 'selected' : '' }}>
-                    {{ $entreprise->nom_entreprise }}
-                </option>
-            @endforeach
-        </select>
-    </form>
+<div class="max-w-7xl mx-auto p-6">
+
+    {{-- Ligne avec le bouton retour et le formulaire de filtre --}}
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+
+        <!-- Bouton de retour -->
+        <a href="{{ route('dashboard') }}"
+           class="inline-flex items-center px-4 py-2 bg-blue-100 text-gray-800 text-sm font-medium rounded hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+            ← Retour au tableau de bord
+        </a>
+
+        <!-- Formulaire de filtre entreprise -->
+        <form method="GET" class="flex items-center gap-3">
+            <label for="entreprise" class="text-sm font-medium">Filtrer par entreprise :</label>
+            <select name="entreprise" id="entreprise" onchange="this.form.submit()" class="border px-3 py-2 rounded text-sm">
+                <option value="">-- Toutes les entreprises --</option>
+                @foreach ($entreprises as $entreprise)
+                    <option value="{{ $entreprise->id }}" {{ $entreprise->id == $selectedEntrepriseId ? 'selected' : '' }}>
+                        {{ $entreprise->nom_entreprise }}
+                    </option>
+                @endforeach
+            </select>
+        </form>
+    </div>
+
+    {{-- Titre --}}
+    <h1 class="text-2xl font-bold mb-6">Segmentation des Clients</h1>
 
     {{-- Lien vers la liste --}}
     <a href="{{ route('admin.clients.liste') }}" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm mb-4 inline-block">

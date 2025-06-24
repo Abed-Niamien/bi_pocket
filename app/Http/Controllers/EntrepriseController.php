@@ -14,6 +14,33 @@ use DB;
 
 class EntrepriseController extends Controller
 {
+
+
+    public function index()
+{
+    $userId = Auth::id();
+
+    $entreprises = DB::table('entreprises')
+        ->join('user_entreprise', 'entreprises.id', '=', 'user_entreprise.id_entreprise')
+        ->where('user_entreprise.id_user', $userId)
+        ->select(
+            'entreprises.id',
+            'entreprises.nom_entreprise',
+            'entreprises.created_at',
+            // ✅ Sous-requête modifiée pour exclure le créateur (user connecté)
+            DB::raw("(
+                SELECT COUNT(*) 
+                FROM user_entreprise 
+                WHERE id_entreprise = entreprises.id AND id_user != $userId
+            ) as nb_employes")
+        )
+        ->distinct()
+        ->get();
+
+    return view('admin.entreprises.index', compact('entreprises'));
+}
+
+
     public function show($id, Request $request)
 {
     $entreprise = Entreprise::findOrFail($id);
@@ -150,6 +177,29 @@ class EntrepriseController extends Controller
     return view('entreprises.show', compact('entreprise', 'stats'));
 }
 
+public function show_($id)
+{
+    // Détails de l’entreprise
+    $entreprise = DB::table('entreprises')->where('id', $id)->first();
+
+    // Récupérer tous les utilisateurs liés à cette entreprise (sauf le créateur)
+    $employes = DB::table('user_entreprise as ue')
+        ->join('users as u', 'ue.id_user', '=', 'u.id')
+        ->leftJoin('role_user as r', 'u.id_role_user', '=', 'r.id') // jointure avec les rôles
+        ->where('ue.id_entreprise', $id)
+        ->where('u.id', '!=', auth()->id()) // ne pas afficher le créateur
+        ->select(
+            'u.id',
+            'u.name',
+            'u.email',
+            'r.lib_role_user',
+            'u.created_at',
+            'ue.created_at as date_affectation'
+        )
+        ->get();
+
+    return view('admin.entreprises.show', compact('entreprise', 'employes'));
+}
 
 
 public function create()

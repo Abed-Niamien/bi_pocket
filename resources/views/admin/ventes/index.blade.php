@@ -1,8 +1,19 @@
 @extends('layouts.sidebar')
 
 @section('content')
+
 <div class="max-w-7xl mx-auto p-4">
-    <h1 class="text-2xl font-bold mb-6">Tableaux d'analyse des ventes</h1>
+
+    <!-- Bouton de retour bien aligné à gauche -->
+    <div class="mb-4">
+        <a href="{{ route('dashboard') }}"
+           class="inline-flex items-center px-4 py-2 bg-blue-100 text-gray-800 text-sm font-medium rounded hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+            ← Retour au tableau de bord
+        </a>
+    </div>
+
+    <!-- Titre principal -->
+    <h1 class="text-2xl font-bold mb-6 text-gray-800">Tableaux d'analyse des ventes</h1>
 
     @php
         $sections = [
@@ -56,18 +67,21 @@
             ],
         ];
     @endphp
-{{-- Formulaire de filtrage par entreprise --}}
-<form method="GET" class="mb-6 flex items-center gap-4">
-    <label for="entreprise" class="text-sm font-semibold">Filtrer par entreprise :</label>
-    <select name="entreprise" id="entreprise" onchange="this.form.submit()" class="border rounded px-3 py-2 text-sm">
-        <option value="">-- Toutes les entreprises --</option>
-        @foreach($entreprises as $e)
-            <option value="{{ $e->id }}" {{ request('entreprise') == $e->id ? 'selected' : '' }}>
-                {{ $e->nom_entreprise }}
-            </option>
-        @endforeach
-    </select>
-</form>
+
+    <!-- Filtre par entreprise -->
+    <form method="GET" class="mb-6 flex items-center gap-4 flex-wrap">
+        <label for="entreprise" class="text-sm font-semibold">Filtrer par entreprise :</label>
+        <select name="entreprise" id="entreprise" onchange="this.form.submit()" class="border rounded px-3 py-2 text-sm">
+            <option value="">-- Toutes les entreprises --</option>
+            @foreach($entreprises as $e)
+                <option value="{{ $e->id }}" {{ request('entreprise') == $e->id ? 'selected' : '' }}>
+                    {{ $e->nom_entreprise }}
+                </option>
+            @endforeach
+        </select>
+    </form>
+
+    <!-- Sections d'analyse -->
     @foreach ($sections as $section)
         <div class="bg-white shadow rounded-lg p-6 mb-10">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-5 space-y-3 sm:space-y-0">
@@ -103,5 +117,10 @@
             </div>
         </div>
     @endforeach
+
 </div>
+
 @endsection
+
+
+ 

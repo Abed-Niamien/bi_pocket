@@ -2,6 +2,14 @@
 
 @section('content')
 
+<!-- Bouton de retour -->
+        <div class="max-w-3xl mx-auto mt-6">
+            <a href="{{ route('dashboard') }}"
+            class="inline-flex items-center px-4 py-2 bg-blue-100 text-gray-800 text-sm font-medium rounded hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                ← Retour au tableau de bord
+            </a>
+        </div>
+
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Ajouter une categorie de produit') }}

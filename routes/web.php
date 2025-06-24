@@ -66,7 +66,11 @@ Route::middleware(['auth'])->group(function () {
     // Employés liés à une entreprise
     Route::get('/entreprises/{entreprise}/employes/create', [EmployeController::class, 'create'])->name('employes.create');
     Route::post('/entreprises/{entreprise}/employes', [EmployeController::class, 'store'])->name('employes.store');
-    Route::get('admin/entreprises/employes/', [EmployeController::class, 'index'])->name('admin.employes.index');
+    Route::get('/admin/entreprises/{id}/employes', [App\Http\Controllers\EntrepriseController::class, 'show_'])
+    ->name('admin.entreprises.show');
+    Route::get('/adminconnectiix/utilisateurs/index', [App\Http\Controllers\UserController::class, 'index'])
+    ->name('admin0123.utilisateurs.index');
+
     //Produits 
     Route::get('/products/create', [ProductController::class, 'create'])->name('products.create');
     Route::post('/products', [ProductController::class, 'store'])->name('products.store');

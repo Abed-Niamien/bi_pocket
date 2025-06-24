@@ -46,11 +46,6 @@
                         Section Entreprises
                     </a>
                 </li>
-                <li class="mb-3">
-                    <a href="{{ route('admin.employes.index') }}" class="text-gray-700 hover:text-indigo-600 font-semibold">
-                        Section Employes
-                    </a>
-                </li>
             </ul>
 
         @elseif($userRole == 2)
@@ -78,8 +73,7 @@
                     <li class="mb-3"><a href="{{ route('pays.index') }}" class="text-gray-700 hover:text-indigo-600">Liste des pays</a></li>
                     <li class="mb-3"><a href="{{ route('pays.create') }}" class="text-gray-700 hover:text-indigo-600">+ Ajouter un pays</a></li>
 
-                    <li class="mb-3"><a href="{{ route('users.index') }}" class="text-gray-700 hover:text-indigo-600">Liste des utilisateurs</a></li>
-                    <li class="mb-3"><a href="{{ route('users.create') }}" class="text-gray-700 hover:text-indigo-600">+ Ajouter un utilisateur</a></li>
+                    <li class="mb-3"><a href="{{ route('admin0123.utilisateurs.index') }}" class="text-gray-700 hover:text-indigo-600">Liste des utilisateurs</a></li>
                 
                     <li class="mb-3"><a href="{{ route('villes.index') }}" class="text-gray-700 hover:text-indigo-600">Liste des villes</a></li>
                     <li class="mb-3"><a href="{{ route('villes.create') }}" class="text-gray-700 hover:text-indigo-600">+ Ajouter une ville</a></li>
@@ -252,14 +246,14 @@
                         <p class="text-2xl font-bold text-indigo-700">{{ $ventes->count() }}</p>
                     </div>
 
-                    <!-- Stock total -->
+                    <!-- Stock total 
                     <div class="bg-white p-4 rounded-lg shadow">
                         <h3 class="text-sm text-gray-500">Total en stock</h3>
                         <p class="text-2xl font-bold text-indigo-700">{{ $stocks->sum('quantite_stock') }}</p>
                     </div>
-                </div>
+                </div>-->
 
-                <!-- Stock par produit -->
+                <!-- Stock par produit 
                 @if($stocks->isNotEmpty())
                     <div class="mt-10 bg-white p-6 rounded-lg shadow">
                         <h3 class="text-lg font-semibold mb-4 text-indigo-700">Stock par produit</h3>
@@ -282,10 +276,10 @@
                     </div>
                 @else
                     <p class="mt-6 text-gray-500 italic">Aucun stock enregistré pour le moment.</p>
-                @endif
+                @endif-->
             @elseif($userRole == 1 and $userName == 'admin0123')
                 <main class="flex-1 px-4 md:px-8 py-8">
-                    <h1 class="text-3xl font-bold mb-6 text-gray-800">Dashboard Administrateur Principal</h1>
+                    <h1 class="text-3xl font-bold mb-6 text-gray-800">Dashboard Administrateur ConnectiiX</h1>
 
                     {{-- Message de succès --}}
                     @if(session('success'))

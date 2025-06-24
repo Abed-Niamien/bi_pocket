@@ -1,8 +1,18 @@
 @extends('layouts.sidebar')
 
 @section('content')
+
 <div class="max-w-6xl mx-auto p-6">
-    <h1 class="text-2xl font-bold mb-6">Liste des Clients</h1>
+
+    <!-- Bouton de retour aligné à gauche -->
+    <div class="mb-4">
+        <a href="{{ route('admin.clients.index') }}"
+           class="inline-flex items-center px-4 py-2 bg-blue-100 text-gray-800 text-sm font-medium rounded hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+            ← Retour à la liste des clients
+        </a>
+    </div>
+
+    <h1 class="text-2xl font-bold mb-6">Liste détaillée des Clients</h1>
 
     <div class="overflow-x-auto bg-white shadow rounded-lg">
         <table class="min-w-full divide-y divide-gray-200 text-sm text-left">
