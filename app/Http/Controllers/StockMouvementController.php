@@ -8,41 +8,58 @@ use Illuminate\Http\Request;
 class StockMouvementController extends Controller
 {
     public function index($entreprise)
-    {
-        // Récupérer tous les users liés à cette entreprise
-        $users = DB::table('user_entreprise')
-            ->where('id_entreprise', $entreprise)
-            ->pluck('id_user');
+{
+    // Récupérer les utilisateurs liés à l'entreprise
+    $users = DB::table('user_entreprise')
+        ->where('id_entreprise', $entreprise)
+        ->pluck('id_user');
 
-        // Entrées (ajout dans stock)
-        $entrees = DB::table('stock_produit as sp')
-            ->join('produits as p', 'sp.id_produit', '=', 'p.id')
-            ->join('stocks as s', 'sp.id_stock', '=', 's.id')
-            ->whereIn('s.id_user', $users)
-            ->select(
-                DB::raw("'Entrée' as type"),
-                'p.lib_produit',
-                'sp.quantite_stock as quantite',
-                's.date_entree as date',
-                's.id_user as utilisateur'
-            );
+    // Entrées (depuis mouvements_stock)
+    $entrees = DB::table('mouvements_stock as ms')
+        ->join('produits as p', 'ms.id_produit', '=', 'p.id')
+        ->whereIn('ms.id_user', $users)
+        ->where('ms.type_mouvement', 'entree')
+        ->select(
+            DB::raw("'Entrée' as type"),
+            'p.lib_produit',
+            'ms.quantite as quantite',
+            'ms.created_at as date',
+            'ms.id_user as utilisateur'
+        )
+        ->get();
 
-        // Sorties (ventes)
-        $sorties = DB::table('produit_vente as pv')
-            ->join('produits as p', 'pv.id_produit', '=', 'p.id')
-            ->join('ventes as v', 'pv.id_vente', '=', 'v.id')
-            ->whereIn('v.id_user', $users)
-            ->select(
-                DB::raw("'Sortie' as type"),
-                'p.lib_produit',
-                'pv.quantite_vente as quantite',
-                'v.date_vente as date',
-                'v.id_user as utilisateur'
-            );
+    // Sorties (depuis ventes)
+    $sorties = DB::table('produit_vente as pv')
+        ->join('produits as p', 'pv.id_produit', '=', 'p.id')
+        ->join('ventes as v', 'pv.id_vente', '=', 'v.id')
+        ->whereIn('v.id_user', $users)
+        ->select(
+            DB::raw("'Sortie' as type"),
+            'p.lib_produit',
+            'pv.quantite_vente as quantite',
+            'v.created_at as date',
+            'v.id_user as utilisateur'
+        )
+        ->get();
 
-        // Union + tri
-        $mouvements = $entrees->unionAll($sorties)->orderBy('date', 'desc')->get();
+    // Fusionner les deux
+    $mouvements = $entrees->merge($sorties);
 
-        return view('admin.stocks.mouvements', compact('mouvements'));
-    }
+    // Trier par produit A-Z, puis type (Entrée avant Sortie), puis date décroissante
+    $mouvements = $mouvements->sort(function ($a, $b) {
+        $produitCompare = strcmp($a->lib_produit, $b->lib_produit);
+        if ($produitCompare !== 0) return $produitCompare;
+
+        // Entrée avant Sortie
+        if ($a->type !== $b->type) {
+            return $a->type === 'Entrée' ? -1 : 1;
+        }
+
+        // Date décroissante
+        return strtotime($b->date) <=> strtotime($a->date);
+    });
+
+    return view('admin.stocks.mouvements', ['mouvements' => $mouvements]);
+}
+
 }

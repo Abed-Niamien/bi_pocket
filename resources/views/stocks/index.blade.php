@@ -30,7 +30,6 @@
                             <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">ID Stock</th>
                             <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Produit</th>
                             <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Quantité</th>
-                            <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Date Entrée</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
@@ -40,7 +39,6 @@
                                     <td class="px-4 py-2">{{ $stock->id }}</td>
                                     <td class="px-4 py-2">{{ $produit->lib_produit ?? 'Inconnu' }}</td>
                                     <td class="px-4 py-2">{{ $produit->pivot->quantite_stock }}</td>
-                                    <td class="px-4 py-2">{{ $stock->date_entree }}</td>
                                 </tr>
                             @endforeach
                         @endforeach

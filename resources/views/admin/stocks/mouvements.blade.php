@@ -4,7 +4,6 @@
 <div class="max-w-7xl mx-auto p-6">
     <h1 class="text-2xl font-bold mb-6">Historique des Mouvements de Stock</h1>
 
-
     {{-- Bouton de retour --}}
     <div class="mb-4">
         <a href="{{ route('admin.stocks.index') }}"
@@ -21,6 +20,7 @@
                     <th class="px-4 py-2">Produit</th>
                     <th class="px-4 py-2">Quantité</th>
                     <th class="px-4 py-2">Date</th>
+                    <th class="px-4 py-2">Heure</th> <!-- Nouvelle colonne -->
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-100">
@@ -32,6 +32,7 @@
                         <td class="px-4 py-2">{{ $mv->lib_produit }}</td>
                         <td class="px-4 py-2">{{ $mv->quantite }}</td>
                         <td class="px-4 py-2">{{ \Carbon\Carbon::parse($mv->date)->format('d/m/Y') }}</td>
+                        <td class="px-4 py-2">{{ \Carbon\Carbon::parse($mv->date)->format('H:i:s') }}</td> <!-- Heure -->
                     </tr>
                 @empty
                     <tr>

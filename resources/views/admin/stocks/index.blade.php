@@ -29,8 +29,8 @@
                     <thead class="bg-gray-100">
                         <tr>
                             <th class="px-4 py-2">Produit</th>
-                            <th class="px-4 py-2">Quantité</th>
-                            <th class="px-4 py-2">Date d'entrée</th>
+                            <th class="px-4 py-2">Quantité disponible</th>
+                            <th class="px-4 py-2">Dernière mise à jour</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-100">
@@ -38,7 +38,9 @@
                             <tr>
                                 <td class="px-4 py-2">{{ $stock->lib_produit }}</td>
                                 <td class="px-4 py-2">{{ $stock->quantite_stock }}</td>
-                                <td class="px-4 py-2">{{ \Carbon\Carbon::parse($stock->date_entree)->translatedFormat('d M Y') }}</td>
+                                <td class="px-4 py-2">
+                                    {{ \Carbon\Carbon::parse($stock->date_mise_a_jour)->translatedFormat('d M Y à H\hi') }}
+                                </td>
                             </tr>
                         @empty
                             <tr>

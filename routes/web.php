@@ -13,13 +13,14 @@ use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\StockMouvementController;
 use App\Http\Controllers\ClientSegmentationController;
+use App\Http\Middleware\NoCacheMiddleware;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', \App\Http\Middleware\NoCacheMiddleware::class])->group(function () {
 
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -100,13 +101,13 @@ Route::middleware(['auth'])->group(function () {
 
 
 
-Route::middleware('auth')->group(function () {
+Route::middleware('auth', \App\Http\Middleware\NoCacheMiddleware::class)->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', \App\Http\Middleware\NoCacheMiddleware::class])->group(function () {
     Route::resource('products', App\Http\Controllers\ProductController::class);
     Route::resource('categorie_produit', App\Http\Controllers\CategorieProduitController::class);
     Route::resource('pays', App\Http\Controllers\PaysController::class);
@@ -115,12 +116,12 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('communes', App\Http\Controllers\CommuneController::class);
 });
 
-Route::prefix('stocks')->name('admin.')->middleware(['auth'])->group(function () {
-    Route::get('/admin', [StockController::class, 'index'])->name('stocks.index');
+Route::prefix('admin/stocks')->name('admin.')->middleware(['auth', \App\Http\Middleware\NoCacheMiddleware::class])->group(function () {
+    Route::get('index', [StockController::class, 'index'])->name('stocks.index');
     Route::get('/edit/{id}', [StockController::class, 'edit'])->name('edit');
     Route::post('/update/{id}', [StockController::class, 'update'])->name('update');
 });
 
-Route::get('stock/mouvements/{entreprise}', [StockMouvementController::class, 'index'])->name('admin.stocks.mouvements')->middleware(['auth']);
+Route::get('stock/mouvements/{entreprise}', [StockMouvementController::class, 'index'])->name('admin.stocks.mouvements')->middleware(NoCacheMiddleware::class);
 
 require __DIR__.'/auth.php';
