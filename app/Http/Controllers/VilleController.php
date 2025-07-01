@@ -15,22 +15,30 @@ class VilleController extends Controller
     }
 
     public function create()
-    {
-        $pays = Pays::all();
-        return view('villes.create', compact('pays'));
-    }
+{
+    $pays = Pays::all();
+    return view('villes.create', compact('pays'));
+}
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'lib_ville' => 'required|string|max:255',
-            'id_pays' => 'required|exists:pays,id',
-        ]);
+public function store(Request $request)
+{
+    $request->validate([
+        'lib_ville' => 'required|string|max:255',
+        'id_pays' => 'required|exists:pays,id',
+        'longitude_ville' => 'nullable|numeric|between:-180,180',
+        'lattitude_ville' => 'nullable|numeric|between:-90,90',
+    ]);
 
-        Ville::create($request->all());
+    Ville::create($request->only([
+        'lib_ville',
+        'id_pays',
+        'longitude_ville',
+        'lattitude_ville',
+    ]));
 
-        return redirect()->route('dashboard')->with('success', 'Ville ajoutée avec succès.');
-    }
+    return redirect()->route('dashboard')->with('success', 'Ville ajoutée avec succès.');
+}
+
 
     public function show(Ville $ville)
     {

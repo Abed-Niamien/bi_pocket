@@ -154,14 +154,26 @@
                         </div>
                     </div>
                 </div>
+
+                {{-- Nouvelle section : Carte des ventes --}}
+                <div class="mt-10 bg-white p-6 rounded shadow">
+                    <h3 class="text-xl font-semibold text-indigo-700 mb-4">Carte des ventes - {{ $entreprise->nom_entreprise }}</h3>
+                    <div id="map-{{ $entreprise->id }}" style="height: 400px; width: 100%;"></div>
+                </div>
             @endforeach
 
             @if($entreprises->isEmpty())
                 <p class="text-center text-gray-600 italic mt-12">Vous n'avez pas encore créé d'entreprise.</p>
             @endif
-      
+      <!-- Leaflet CSS -->
+            <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+            <!-- Leaflet JS -->
+            <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
             <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+    
     document.addEventListener('DOMContentLoaded', function () {
         @foreach($entreprises as $entreprise)
             new Chart(document.getElementById('chart-periode-{{ $entreprise->id }}'), {
@@ -206,7 +218,42 @@
             });
         @endforeach
     });
+
+    @foreach($entreprises as $entreprise)
+    // Initialisation des charts existants ici...
+
+    // Initialisation de la carte Leaflet pour l'entreprise {{ $entreprise->id }}
+    (function() {
+        var ventes = @json($ventesAvecCoordonnees[$entreprise->id] ?? []);
+
+        var map = L.map('map-{{ $entreprise->id }}').setView([6.6, 20.0], 3); // Centré sur l'Afrique
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        ventes.forEach(function(vente) {
+            var lat = parseFloat(vente.lattitude_commune);
+            var lng = parseFloat(vente.longitude_commune);
+
+            if (!isNaN(lat) && !isNaN(lng)) {
+                L.marker([lat, lng]).addTo(map)
+                    .bindPopup(
+                        `<strong>Nom client :</strong> ${vente.nom_client}<br>` +
+                        `<strong>Montant total:</strong> ${vente.montant_total}FCFA</><br>` +
+                        `<strong>Commune :</strong> ${vente.lib_commune}<br>` +
+                        `<strong>Date :</strong> ${vente.date_vente}<br>` +
+                        `<strong>Produit :</strong> ${vente.lib_produit}<br>` +
+                        `<strong>Quantite :</strong> ${vente.quantite_vente}<br>` +
+                        `<strong>Canal :</strong> ${vente.canal_vente}`
+                    );
+            }
+        });
+    })();
+@endforeach
+
 </script>
+
 
     </main>
 </div>

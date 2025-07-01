@@ -71,6 +71,38 @@ class DashboardController extends Controller
                 ->limit(5)
                 ->get();
 
+            $ventesAvecCoordonnees[$entreprise->id] = DB::table('ventes')
+    ->join('clients', 'ventes.id_client', '=', 'clients.id')
+    ->join('communes', 'clients.id_commune', '=', 'communes.id')
+    ->join('produit_vente', 'ventes.id', '=', 'produit_vente.id_vente')
+    ->join('produits', 'produit_vente.id_produit', '=', 'produits.id')  // <-- jointure produits
+    ->whereIn('ventes.id_user', $usersIds)
+    ->whereNotNull('communes.lattitude_commune')
+    ->whereNotNull('communes.longitude_commune')
+    ->select(
+        'clients.nom_client',
+        DB::raw('SUM(produit_vente.montant_total) as montant_total'),
+        'communes.lib_commune',
+        'communes.lattitude_commune',
+        'communes.longitude_commune',
+        'ventes.date_vente',
+        'ventes.canal_vente',
+        'produits.lib_produit',   // <-- ici nom produit depuis la table produits
+        'produit_vente.quantite_vente'
+    )
+    ->groupBy(
+        'clients.nom_client',
+        'communes.lib_commune',
+        'communes.lattitude_commune',
+        'communes.longitude_commune',
+        'ventes.date_vente',
+        'ventes.canal_vente',
+        'produits.lib_produit', 
+        'produit_vente.quantite_vente'  // <-- aussi group by nom produit
+    )
+    ->get();
+
+
             $statistiquesParEntreprise[$entreprise->id] = [
                 'ventesParPeriode' => $ventesParPeriode,
                 'ventesParCategorie' => $ventesParCategorie,
@@ -91,6 +123,7 @@ class DashboardController extends Controller
             'clients' => $clients,
             'ventes' => $ventes,
             'statistiquesParEntreprise' => $statistiquesParEntreprise,
+            'ventesAvecCoordonnees' => $ventesAvecCoordonnees,
         ]);
     }
 

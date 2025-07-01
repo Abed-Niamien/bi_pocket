@@ -15,22 +15,30 @@ class CommuneController extends Controller
     }
 
     public function create()
-    {
-        $villes = Ville::all();
-        return view('communes.create', compact('villes'));
-    }
+{
+    $villes = Ville::all();
+    return view('communes.create', compact('villes'));
+}
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'lib_commune' => 'required|string|max:255',
-            'id_ville' => 'required|exists:villes,id',
-        ]);
+public function store(Request $request)
+{
+    $request->validate([
+        'lib_commune' => 'required|string|max:255',
+        'id_ville' => 'required|exists:villes,id',
+        'longitude_commune' => 'nullable|numeric|between:-180,180',
+        'lattitude_commune' => 'nullable|numeric|between:-90,90',
+    ]);
 
-        Commune::create($request->all());
+    Commune::create($request->only([
+        'lib_commune',
+        'id_ville',
+        'longitude_commune',
+        'lattitude_commune',
+    ]));
 
-        return redirect()->route('dashboard')->with('success', 'Commune ajoutée avec succès.');
-    }
+    return redirect()->route('dashboard')->with('success', 'Commune ajoutée avec succès.');
+}
+
 
     public function show(Commune $commune)
     {

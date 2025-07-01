@@ -15,18 +15,27 @@ class PaysController extends Controller
     }
 
     public function create()
-    {
-        return view('pays.create');
-    }
+{
+    return view('pays.create');
+}
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'nom_pays' => 'required|string|max:255',
-        ]);
-        Pays::create($request->all());
-        return redirect()->route('dashboard')->with('success', 'Pays ajouté avec succès.');
-    }
+public function store(Request $request)
+{
+    $request->validate([
+        'nom_pays' => 'required|string|max:255',
+        'longitude_pays' => 'nullable|numeric|between:-180,180',
+        'lattitude_pays' => 'nullable|numeric|between:-90,90',
+    ]);
+
+    Pays::create($request->only([
+        'nom_pays',
+        'longitude_pays',
+        'lattitude_pays',
+    ]));
+
+    return redirect()->route('dashboard')->with('success', 'Pays ajouté avec succès.');
+}
+
 
     public function show(Pays $pay)
     {

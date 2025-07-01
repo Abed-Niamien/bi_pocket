@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('pays', function (Blueprint $table) {
             $table->id();
             $table->string('nom_pays');
+            $table->decimal('longitude_pays', 10, 8); // 10 chiffres au total, 8 après la virgule
+            $table->decimal('lattitude_pays', 10, 8);
             $table->timestamps();
         });
     }

@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('villes', function (Blueprint $table) {
             $table->id();
             $table->string('lib_ville');
+            $table->decimal('longitude_ville', 10, 8); // 10 chiffres au total, 8 après la virgule
+            $table->decimal('lattitude_ville', 10, 8);
             $table->unsignedBigInteger('id_pays');
             $table->timestamps();
 
